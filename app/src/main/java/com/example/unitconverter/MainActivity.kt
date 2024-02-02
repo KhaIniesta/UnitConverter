@@ -89,9 +89,7 @@ fun UnitConverter() {
                             isDropdownMenuExpanded = false
 
                             if (isInputSelect) {
-                                if (inputContent.toDoubleOrNull() != null) {
-                                    inputValue = inputContent.toDouble() * factor
-                                }
+                                inputValue = (inputContent.toDoubleOrNull() ?: 0.0) * factor
                             } else {
                                 result = inputValue / factor
                             }
