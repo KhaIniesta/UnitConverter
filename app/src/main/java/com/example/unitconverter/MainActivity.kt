@@ -73,7 +73,7 @@ fun UnitConverter() {
 
             DropdownMenu(expanded = isDropdownMenuExpanded, onDismissRequest = {
                 isDropdownMenuExpanded = false
-                buttonContent = "Input Unit"
+                buttonContent = if (isInputSelect) { "In Unit" } else { "Out Unit" }
             }) {
                 for ((unit, factor) in unitFactors) {
                     DropdownMenuItem(
