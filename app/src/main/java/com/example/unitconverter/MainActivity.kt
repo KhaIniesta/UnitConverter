@@ -22,8 +22,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableDoubleState
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +48,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun UnitConverter() {
+    // If you want to update your app and have more units, just add the pairs below
     val unitFactors = listOf(
         "Centimeter" to 1.0,
         "Feet" to 30.48,
@@ -58,6 +57,47 @@ fun UnitConverter() {
     val inputContent = remember { mutableStateOf("") }
     val inputValue = remember { mutableDoubleStateOf(0.0) }
     val result = remember { mutableDoubleStateOf(0.0) }
+    val unitDropDown: @Composable (Boolean) -> Unit = { isInputSelect ->
+        Box {
+            var isDropdownMenuExpanded by remember { mutableStateOf(false) }
+            // buttonContent's value is the content of the dropDownMenu's item that user click. If user has not selected, the default content is below
+            var buttonContent by remember {
+                mutableStateOf(if (isInputSelect) "In Unit" else "Out Unit")
+            }
+            Button(modifier = Modifier.width(135.dp), onClick = {
+                isDropdownMenuExpanded = true
+            }) {
+                Text(buttonContent)
+                Icon(Icons.Default.ArrowDropDown, "Arrow Down")
+            }
+
+            DropdownMenu(expanded = isDropdownMenuExpanded, onDismissRequest = {
+                isDropdownMenuExpanded = false
+                buttonContent = "Input Unit"
+            }) {
+                for ((unit, factor) in unitFactors) {
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = unit)
+                        },
+                        onClick = {
+                            buttonContent = unit
+                            isDropdownMenuExpanded = false
+
+                            if (isInputSelect) {
+                                if (inputContent.value.toDoubleOrNull() != null) {
+                                    inputValue.doubleValue = inputContent.value.toDouble() * factor
+                                }
+                            }
+                            else {
+                                result.doubleValue = inputValue.doubleValue / factor
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -81,9 +121,9 @@ fun UnitConverter() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Row {
-            UnitDropDown(unitFactors = unitFactors, inputContent = inputContent, inputValue = inputValue, result = result, isInputSelect = true)
+            unitDropDown(true)
             Spacer(modifier = Modifier.width(16.dp))
-            UnitDropDown(unitFactors = unitFactors, inputContent = inputContent, inputValue = inputValue, result = result, isInputSelect = false)
+            unitDropDown(false)
         }
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -107,54 +147,6 @@ fun UnitConverterPreview() {
     UnitConverterTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             UnitConverter()
-        }
-    }
-}
-
-@Composable
-fun UnitDropDown(
-    unitFactors: List<Pair<String, Double>>,
-    inputContent: MutableState<String>,
-    inputValue: MutableDoubleState,
-    result: MutableDoubleState,
-    isInputSelect: Boolean
-) {
-    Box {
-        var isDropdownMenuExpanded by remember { mutableStateOf(false) }
-        var buttonContent by remember {
-            mutableStateOf(if (isInputSelect) "In Unit" else "Out Unit")
-        }
-        Button(modifier = Modifier.width(135.dp), onClick = {
-            isDropdownMenuExpanded = true
-        }) {
-            Text(buttonContent)
-            Icon(Icons.Default.ArrowDropDown, "Arrow Down")
-        }
-
-        DropdownMenu(expanded = isDropdownMenuExpanded, onDismissRequest = {
-            isDropdownMenuExpanded = false
-            buttonContent = "Input Unit"
-        }) {
-            for ((unit, factor) in unitFactors) {
-                DropdownMenuItem(
-                    text = {
-                        Text(text = unit)
-                    },
-                    onClick = {
-                        buttonContent = unit
-                        isDropdownMenuExpanded = false
-
-                        if (isInputSelect) {
-                            if (inputContent.value.toDoubleOrNull() != null) {
-                                inputValue.doubleValue = inputContent.value.toDouble() * factor
-                            }
-                        }
-                        else {
-                            result.doubleValue = inputValue.doubleValue / factor
-                        }
-                    }
-                )
-            }
         }
     }
 }
