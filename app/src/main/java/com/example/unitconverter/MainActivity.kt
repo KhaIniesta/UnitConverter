@@ -54,9 +54,9 @@ fun UnitConverter() {
         "Feet" to 30.48,
         "Meter" to 100.0
     )
-    val inputContent = remember { mutableStateOf("") }
-    val inputValue = remember { mutableDoubleStateOf(0.0) }
-    val result = remember { mutableDoubleStateOf(0.0) }
+    var inputContent by remember { mutableStateOf("") }
+    var inputValue by remember { mutableDoubleStateOf(0.0) }
+    var result by remember { mutableDoubleStateOf(0.0) }
     val unitDropDown: @Composable (Boolean) -> Unit = { isInputSelect ->
         Box {
             var isDropdownMenuExpanded by remember { mutableStateOf(false) }
@@ -85,12 +85,12 @@ fun UnitConverter() {
                             isDropdownMenuExpanded = false
 
                             if (isInputSelect) {
-                                if (inputContent.value.toDoubleOrNull() != null) {
-                                    inputValue.doubleValue = inputContent.value.toDouble() * factor
+                                if (inputContent.toDoubleOrNull() != null) {
+                                    inputValue = inputContent.toDouble() * factor
                                 }
                             }
                             else {
-                                result.doubleValue = inputValue.doubleValue / factor
+                                result = inputValue / factor
                             }
                         }
                     )
@@ -110,9 +110,9 @@ fun UnitConverter() {
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = inputContent.value,
+            value = inputContent,
             onValueChange = {
-                inputContent.value = it
+                inputContent = it
             },
             label = {
                 Text(text = "Enter value")
@@ -130,7 +130,7 @@ fun UnitConverter() {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(text = "Result: ", fontSize = 20.sp)
             Text(
-                text = "${result.doubleValue}",
+                text = "$result",
                 color = Color.Green,
                 fontSize = 25.sp
             )
