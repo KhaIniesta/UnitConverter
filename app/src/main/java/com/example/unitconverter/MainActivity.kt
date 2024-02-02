@@ -73,7 +73,11 @@ fun UnitConverter() {
 
             DropdownMenu(expanded = isDropdownMenuExpanded, onDismissRequest = {
                 isDropdownMenuExpanded = false
-                buttonContent = if (isInputSelect) { "In Unit" } else { "Out Unit" }
+                buttonContent = if (isInputSelect) {
+                    "In Unit"
+                } else {
+                    "Out Unit"
+                }
             }) {
                 for ((unit, factor) in unitFactors) {
                     DropdownMenuItem(
@@ -88,8 +92,7 @@ fun UnitConverter() {
                                 if (inputContent.toDoubleOrNull() != null) {
                                     inputValue = inputContent.toDouble() * factor
                                 }
-                            }
-                            else {
+                            } else {
                                 result = inputValue / factor
                             }
                         }
